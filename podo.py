@@ -8,25 +8,50 @@ import glob
 
 def banner():
 	os.system("clear")
-	print "                O=(‘-‘Q)   "               
+	print "\n                O=(‘-‘Q)   "               
 	print "        .--.  .--. .--.  .--.       .--. .   ..   . .--..   ."
 	print "        |   ):    :|   ::    :      |   )|   ||\  |:    |   |"
 	print "        |--' |    ||   ||    | ____ |--' |   || \ ||    |---|"
 	print "        |    :    ;|   ;:    ;      |    :   ;|  \|:    |   |"
 	print "        '     `--' '--'  `--'       '     `-' '   ' `--''   '"
+	print "   [Easy testing from multiple android devices] + [by hahwul]"
 
-	print data
-	print "\n------------------------- Usage -----------------------------"
-	print "1 -> Install all apk on all devices"
-	print "2 -> Capture log all devices"
-	print "3 -> List of Devices"
-	print "x -> Exit this program"
+def usage():
+	banner()
+	print "\nChoice mode(Input number)"
+	print "------------------------- CMD -----------------------------"
+	print " [1] -> Install all APK(single or all devices)"
+	print " [2] -> Capture log(single or all devices)"
+	print " [3] -> List of Devices"
+	print " [x] -> Exit this program"
+	print "-------------------------------------------------------------"
+
+def usage_1():
+	banner()
+	print "\n[1] Install all APK Mode"
+	print "------------------------- CMD -----------------------------"
+	print " [1] -> Single Device"
+	print " [2] -> All Devices"
+	print " [x] -> Come back Home"
+	print "-------------------------------------------------------------"
+
+def usage_choice():
+	banner()
+	print "\n[1-1] Choice device(Input number)"
+	print "------------------------- CMD -----------------------------"
+
+def usage_2():
+	banner()
+	print "\n[2] Capture log"
+	print "------------------------- CMD -----------------------------"
+	print " [1] -> Single Device"
+	print " [2] -> All Devices"
+	print " [x] -> Come back Home"
 	print "-------------------------------------------------------------"
 
 appList = glob.glob("./*.apk")
 appListCount = len(appList)
-cmd = ['adb','devices']
-fd_popen = subprocess.Popen(cmd,stdout=subprocess.PIPE, shell=True).stdout
+fd_popen = subprocess.Popen("adb devices",stdout=subprocess.PIPE, shell=True).stdout
 data = fd_popen.read().strip()
 fd_popen.close()
 data = data.split('\n')
@@ -37,43 +62,74 @@ def listOfDevices():
 	for i in range(len(data)):
 		tmp = data[i].find('\t')
 		data[i] = data[i][:tmp]
-		print "["+str(i+1)+"] "+data[i]+"\n"
+		print " + ["+str(i+1)+"]  -->  "+data[i]+"\n"
 	raw_input("Press any key.\n")
 
-def runThread(query):
-	for i in range(appListCount):
-		print query+appList[i]
-		#os.system(query+appList[i])
+def runThread(query,atype,threadNum):
+	if(atype == "apk"):
+		for i in range(appListCount):
+			print "running.. "+query+appList[i]
+			os.system(query+appList[i])
+	elif(atype == "log"):
+		print "["+str(threadNum)+" podo] running.. "+query+" > log_"+str(threadNum)+".txt"
+		os.system(query+" > log_"+str(threadNum)+".txt")
 
-def installAllDevices():
+def allDevices(cbe,caf,atype):
 	threads = []
-	cbe = "adb -s "
-	caf = " install "
 	query =[]
 	for i in range(len(data)):
 		tmp = data[i].find('\t')
 		data[i] = data[i][:tmp]
 		query.append(cbe+data[i]+caf)
 		q=cbe+data[i]+caf
-		t = threading.Thread(target=runThread,args=(q,))
+		t = threading.Thread(target=runThread,args=(q,atype,i,))
 		t.start()	
 	for t in threads:
 		t.join()
 	raw_input("Press any key.\n")
 
-#adb shell screencap -p /sdcard/sc.png
-#adb pull /sdcard/sc.png	
+def singleDevice(cbe,caf,atype):
+	if(atype != "choice"):
+		usage_choice()
+	
+	query =[]
+	for i in range(len(data)):
+		tmp = data[i].find('\t')
+		data[i] = data[i][:tmp]
+		print " ["+str(i)+"]  ->  "+data[i] 
+	print "-------------------------------------------------------------"
+	number = raw_input("CMD>: ")
+	query.append(cbe+data[int(number)]+caf)
+	q=cbe+data[i]+caf
+	runThread(q,atype,0)
+	raw_input("Press any key.\n")
 
+print "Load adb devices.."
 os.system("adb devices")
 while(1):
-	banner()
+	usage()
 	cmd = raw_input("CMD>: ")
 	if(cmd == "x"):
 		exit()
 	elif(cmd == "1"):
-		installAllDevices()
+		usage_1()
+		cmd_1d = raw_input("CMD>: ")
+		if(cmd_1d == "1"):
+			singleDevice("adb -s "," install ","apk")
+		elif(cmd_1d == "2"):
+			allDevices("adb -s "," install ","apk")
+		elif(cmd_1d == "x"):
+			pass
+		
 	elif(cmd == "2"):
-		pass
+		usage_2()
+		cmd_1d = raw_input("CMD>: ")
+		if(cmd_1d == "1"):
+			singleDevice("adb -s "," logcat ","log")
+		elif(cmd_1d == "2"):
+			allDevices("adb -s "," logcat ","log")
+		elif(cmd_1d == "x"):
+			pass
 	elif(cmd == "3"):
 		listOfDevices()	
 		result = 0
