@@ -8,9 +8,8 @@
        [Easy testing from multiple android devices] + [by hahwul]
 
 # podopunch
-Easy testing from multiple android devices. for.. my wife
-"Podo" is a Korean word for grape. So .... It's Grape Punch!
-
+Easy testing from multiple android devices. for.. my wife<br>
+"Podo" is a Korean word for grape. So .... It's Grape Punch!<br>
 
 # Download and Run
 $ git clone https://github.com/hahwul/podopunch <br>
