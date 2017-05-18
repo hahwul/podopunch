@@ -8,7 +8,7 @@
        [Easy testing from multiple android devices] + [by hahwul]
 
 # podopunch
-Easy testing from multiple android devices   
+Easy testing from multiple android devices. for.. my wife
 
 
 # Download and Run
