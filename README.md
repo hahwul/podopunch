@@ -1,3 +1,4 @@
+<img src="https://cloud.githubusercontent.com/assets/13212227/26283674/726da334-3e67-11e7-9522-6b465275cbba.png">
 
                   O=(‘-‘Q)   
         .--.  .--. .--.  .--.       .--. .   ..   . .--..   .
