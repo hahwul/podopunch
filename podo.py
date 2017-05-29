@@ -72,8 +72,8 @@ def runThread(query,atype,threadNum):
 			print "running.. "+query+appList[i]
 			os.system(query+appList[i])
 	elif(atype == "log"):
-		print "["+str(threadNum)+" podo] running.. "+query+"/log_"+str(threadNum)+".txt"
-		os.system(query+"/log_"+str(threadNum)+".txt")
+		print "["+str(threadNum)+" podo] running.. "+query+"/"+str(threadNum)+".log"
+		os.system(query+"/"+str(threadNum)+".log")
 
 def allDevices(cbe,caf,atype):
 	threads = []
