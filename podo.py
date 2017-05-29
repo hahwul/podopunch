@@ -5,6 +5,7 @@ import subprocess
 import os
 import sys
 import glob
+from datetime import datetime
 
 def banner():
 	os.system("clear")
@@ -71,16 +72,14 @@ def runThread(query,atype,threadNum):
 			print "running.. "+query+appList[i]
 			os.system(query+appList[i])
 	elif(atype == "log"):
-		print "["+str(threadNum)+" podo] running.. "+query+" > log_"+str(threadNum)+".txt"
-		os.system(query+" > log_"+str(threadNum)+".txt")
+		print "["+str(threadNum)+" podo] running.. "+query+"/log_"+str(threadNum)+".txt"
+		os.system(query+"/log_"+str(threadNum)+".txt")
 
 def allDevices(cbe,caf,atype):
 	threads = []
-	query =[]
 	for i in range(len(data)):
 		tmp = data[i].find('\t')
 		data[i] = data[i][:tmp]
-		query.append(cbe+data[i]+caf)
 		q=cbe+data[i]+caf
 		t = threading.Thread(target=runThread,args=(q,atype,i,))
 		t.start()	
@@ -92,16 +91,30 @@ def singleDevice(cbe,caf,atype):
 	if(atype != "choice"):
 		usage_choice()
 	
-	query =[]
 	for i in range(len(data)):
 		tmp = data[i].find('\t')
 		data[i] = data[i][:tmp]
 		print " ["+str(i)+"]  ->  "+data[i] 
 	print "-------------------------------------------------------------"
 	number = raw_input("CMD>: ")
-	query.append(cbe+data[int(number)]+caf)
-	q=cbe+data[i]+caf
-	runThread(q,atype,0)
+	
+	nowtime = datetime.today().strftime("%Y%m%d%H%M%s")
+	dirname = './log/'+nowtime
+	if not os.path.isdir(dirname):
+		os.mkdir(dirname)
+	
+	if(atype == "log"):
+		q=cbe+data[int(number)]+" logcat -v time -b main -d > "+dirname
+		runThread(q,atype,'main')
+		q=cbe+data[int(number)]+" logcat -v time -b system -d > "+dirname
+		runThread(q,atype,'system')
+		q=cbe+data[int(number)]+" logcat -v time -b event -d > "+dirname
+		runThread(q,atype,'event')
+		q=cbe+data[int(number)]+" logcat -v time -b radio -d > "+dirname
+		runThread(q,atype,'radio')
+	else:
+		q=cbe+data[int(number)]+caf
+		runThread(q,atype,0)
 	raw_input("Press any key.\n")
 
 print "Load adb devices.."
@@ -127,7 +140,7 @@ while(1):
 		if(cmd_1d == "1"):
 			singleDevice("adb -s "," logcat ","log")
 		elif(cmd_1d == "2"):
-			allDevices("adb -s "," logcat ","log")
+			allDevices("adb -s "," logcat -v","log")
 		elif(cmd_1d == "x"):
 			pass
 	elif(cmd == "3"):
